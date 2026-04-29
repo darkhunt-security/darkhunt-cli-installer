@@ -21,6 +21,20 @@ Supported platforms: `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`.
 
 The installer downloads `SHA256SUMS` alongside the binary and verifies the checksum before installing.
 
+## Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/darkhunt-security/darkhunt-cli-installer/main/uninstall.sh | bash
+```
+
+By default this removes the binary but **preserves** your config and logs at `~/.darkhunt/`. To also wipe config + logs:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/darkhunt-security/darkhunt-cli-installer/main/uninstall.sh | PURGE=1 bash
+```
+
+`INSTALL_DIR` is honored just like in `install.sh`.
+
 ## Releases
 
 Binaries and checksums are published on the [Releases](https://github.com/darkhunt-security/darkhunt-cli-installer/releases) page.
