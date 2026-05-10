@@ -1,0 +1,78 @@
+# Example `targets.yaml` for darkhunt-cli.
+#
+# Copy this file to one of:
+#   - `.darkhunt/targets.yaml` in your project root  (project-local, picked up walking up from cwd)
+#   - `~/.darkhunt/targets.yaml`                     (per-user fallback)
+#
+# Then edit the slug, the two UUIDs, and the connection details for your AI app.
+# `darkhunt-cli target init --application <uuid>` can scaffold this for you;
+# this file is for the case where you'd rather start from a hand-edited template.
+
+targets:
+  # ── A typical JSON POST chat endpoint with bearer auth.
+  #    `darkhunt-cli scan --target my-chatbot ...` resolves workspace + application
+  #    from the entry below; no flags needed beyond the slug.
+  my-chatbot:
+    type: darkhunt/http
+
+    # Bind this slug to a server-side application. Get both UUIDs from the
+    # dashboard (Applications → your app → Settings).
+    workspaceId: 00000000-0000-0000-0000-000000000000
+    applicationId: 00000000-0000-0000-0000-000000000000
+
+    # Where to POST attack prompts. The CLI never reads the response body
+    # except via `responsePath` / `transformResponse` below.
+    url: https://your-app.example.com/api/chat
+    method: POST
+
+    # Optional auth. Drop the whole block if your endpoint is unauthenticated.
+    # Other shapes supported: { type: basic, username, password },
+    # { type: api-key, header, value }, { type: custom, headers: { … } }.
+    auth:
+      type: bearer
+      token: ${env:MY_APP_API_KEY}
+
+    # Pick ONE body strategy.
+    #
+    #   promptField        — simplest. Sends `{ "<field>": "<prompt>" }`.
+    #   bodyTemplate       — full JSON template with `{{prompt}}` substituted (JSON-escaped).
+    #   transformRequest   — JS expression returning the body, for non-trivial shapes.
+    promptField: message
+    # bodyTemplate: |
+    #   {"model":"gpt-4o-mini","messages":[{"role":"user","content":"{{prompt}}"}]}
+    # transformRequest: '{"input": prompt, "stream": false}'
+
+    # Pick ONE response extraction.
+    #
+    #   responsePath       — dotted JSON path. `choices.0.message.content` for OpenAI-compat.
+    #   transformResponse  — JS expression with `json` and `text` in scope.
+    responsePath: response
+    # responsePath: choices.0.message.content
+    # transformResponse: 'json.output[0].text'
+
+    # Per-request timeout. Bump this for slow LLMs / chained tool calls.
+    timeoutMs: 30000
+
+    # Retry policy for transient HTTP errors (408, 429, 5xx) and timeouts.
+    retries: 3
+    retryBackoffMs: 1000
+    # retryOnStatus: [403]   # extra statuses to treat as retryable (e.g. some APIs use 403 for rate-limit)
+
+    # Optional scope guardrail. When set, the target refuses to construct
+    # if the URL's host doesn't match. Defends against typos and stale
+    # env-var exports sending traffic to the wrong host.
+    allowedHosts:
+      - your-app.example.com
+      # - "*.your-app.example.com"   # single-segment subdomain wildcard
+
+    # Optional client-evaluated assertions. When any pass on a target reply,
+    # the action loop short-circuits the run as `success` without spending
+    # a judge LLM call. Match values stay client-side; only `{type, passed}`
+    # flows upstream. Useful for CTF-style targets with a known secret.
+    # assertions:
+    #   - type: contains
+    #     value: SECRET_TOKEN
+    #     metric: token_leak
+    #   - type: regex
+    #     value: '\b\d{3}-\d{2}-\d{4}\b'   # SSN-shaped
+    #     metric: pii_leak

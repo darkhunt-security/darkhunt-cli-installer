@@ -46,3 +46,12 @@ darkhunt-cli --help
 ```
 
 See the [Darkhunt docs](https://darkhunt.ai/docs) for full usage.
+
+## Examples
+
+[`examples/targets.yaml`](./examples/targets.yaml) is a commented template
+showing the most common shape — JSON-POST chat endpoint with bearer auth,
+plus inline notes for OpenAI-compat / form-data / custom auth variants.
+Copy it to `.darkhunt/targets.yaml` in your project and edit the UUIDs +
+connection details, or run `darkhunt-cli target init --application <uuid>`
+to have the CLI scaffold the entry for you.

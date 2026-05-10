@@ -1,0 +1,18 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local secrets / env overrides
+.env
+.env.*.local
+
+# Local rendered config — users may envsubst examples/targets.yaml into the
+# repo while exploring; don't want their UUIDs committed back.
+.darkhunt/
+*.local.yaml
