@@ -6,4 +6,4 @@
 
 If you'd prefer the CLI to scaffold a target for you instead of editing
 YAML by hand, run `darkhunt-cli target init --application <uuid>` after
-enrolling.
+logging in (`darkhunt-cli login`).

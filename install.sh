@@ -85,5 +85,9 @@ esac
 
 echo ""
 echo "Next steps:"
-echo "  darkhunt-cli enroll --api-key <key> --workspace <id>"
+echo "  darkhunt-cli login       # sign in through your browser"
+echo "  darkhunt-cli status      # confirm it worked, and see your tenants"
 echo "  darkhunt-cli --help"
+echo ""
+echo "For CI and other unattended use, authenticate with an API key instead:"
+echo "  export DH_API_KEY=<key>"
